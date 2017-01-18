@@ -129,5 +129,43 @@ module Mixpanel
 
       ret
     end
+
+    def import_batch(api_key, events = [])
+      # Events should be of the structure
+      # {
+      #   distinct_id: DISTINCT_ID,
+      #   event: EVENT_NAME,
+      #   properties: {}
+      # }
+      data = events.map do |event|
+        properties = {
+          'distinct_id' => event.distinct_id,
+          'token' => @token,
+          'time' => Time.now.to_i,
+          'mp_lib' => 'ruby',
+          '$lib_version' => Mixpanel::VERSION
+        }.merge(event.properties)
+
+        {
+          'event' => event.event,
+          'properties' => properties
+        }
+      end
+
+      message = {
+        'data' => data,
+        'api_key' => api_key
+      }
+
+      ret = true
+      begin
+        @sink.call(:import_batch, message.to_json)
+      rescue MixpanelError => e
+        @error_handler.handle(e)
+        ret = false
+      end
+
+      ret
+    end
   end
 end

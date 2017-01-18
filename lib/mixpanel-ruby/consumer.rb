@@ -76,6 +76,7 @@ module Mixpanel
         :event => @events_endpoint,
         :profile_update => @update_endpoint,
         :import => @import_endpoint,
+        :import_batch => @import_endpoint,
       }[type]
 
       decoded_message = JSON.load(message)
