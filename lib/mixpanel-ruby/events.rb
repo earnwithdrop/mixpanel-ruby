@@ -139,15 +139,15 @@ module Mixpanel
       # }
       data = events.map do |event|
         properties = {
-          'distinct_id' => event.distinct_id,
+          'distinct_id' => event['distinct_id'],
           'token' => @token,
           'time' => Time.now.to_i,
           'mp_lib' => 'ruby',
           '$lib_version' => Mixpanel::VERSION
-        }.merge(event.properties)
+        }.merge(event['properties'])
 
         {
-          'event' => event.event,
+          'event' => event['event'],
           'properties' => properties
         }
       end
